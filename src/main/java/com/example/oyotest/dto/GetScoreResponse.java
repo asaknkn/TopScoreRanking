@@ -6,13 +6,15 @@ import java.util.Date;
 
 @Data
 public class GetScoreResponse {
+    private Integer id;
     private String player;
     private Integer score;
-    private Date published_date;
+    private Date time;
 
-    public GetScoreResponse(String player, Integer score, Date published_date) {
+    public GetScoreResponse(Integer id, String player, Integer score, Date time) {
+        this.id = id;
         this.player = player;
         this.score = score;
-        this.published_date = published_date;
+        this.time = time;
     }
 }
