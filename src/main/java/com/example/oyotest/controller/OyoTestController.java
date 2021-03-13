@@ -1,13 +1,15 @@
 package com.example.oyotest.controller;
 
-import com.example.oyotest.response.DeleteScoreResponse;
-import com.example.oyotest.response.GetScoreResponse;
+import com.example.oyotest.dto.CreateScoreRequest;
+import com.example.oyotest.dto.CreateScoreResponse;
+import com.example.oyotest.dto.DeleteScoreResponse;
+import com.example.oyotest.dto.GetScoreResponse;
 import com.example.oyotest.service.OyoTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("/scores")
+@RequestMapping("/v1/scores")
 public class OyoTestController {
 
     private final OyoTestService oyoTestService;
@@ -15,14 +17,21 @@ public class OyoTestController {
     @Autowired
     public  OyoTestController(OyoTestService oyoTestService) {this.oyoTestService = oyoTestService;}
 
-    @GetMapping("/find/{id}")
+
+    @PostMapping("")
+    public CreateScoreResponse createScore(@RequestBody CreateScoreRequest params) {
+
+        return  oyoTestService.createScore(params);
+    }
+
+    @GetMapping("/{id}")
     public GetScoreResponse getScore(@PathVariable("id") Integer id) {
 
         GetScoreResponse res = oyoTestService.findScore(id);
         return res;
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public DeleteScoreResponse deleteScore(@PathVariable("id") Integer id) {
         DeleteScoreResponse res = oyoTestService.deleteScore(id);
         return  res;

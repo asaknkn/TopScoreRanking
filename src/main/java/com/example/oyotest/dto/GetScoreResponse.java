@@ -1,4 +1,4 @@
-package com.example.oyotest.response;
+package com.example.oyotest.dto;
 
 
 import lombok.Data;

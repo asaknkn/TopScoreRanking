@@ -3,6 +3,7 @@ package com.example.oyotest.repository;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.mapper.ScoresMapper;
 import com.example.oyotest.utility.TestUtility;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
-
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,24 +28,55 @@ class OyoTestRepositoryTest {
     private ScoresMapper scoresMapper;
 
     private static final Integer ID = 1;
+    private static final String INPUTDATESTR = "1984-11-01T00:00:00+09:00";
+    static ScoreEntity entity;
 
-    @Test
-    public void findSuccess() throws ParseException {
-        String inpDateStr = "1984-11-01 00:00:00";
-        Date dateTime = TestUtility.changeStrToDate(inpDateStr);
-
-        ScoreEntity entity = new ScoreEntity();
+    @BeforeAll
+    static void before() throws ParseException {
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+        entity = new ScoreEntity();
+        entity.setId(ID);
         entity.setPlayer("Goku");
         entity.setScore(10);
-        entity.setPublishedDate(dateTime);
+        entity.setTime(dateTime);
+    }
+
+    @Test void createSuccess() throws ParseException {
+
+        doNothing().when(scoresMapper).create(any());
+
+        ScoreEntity result = oyoTestRepository.create(entity);
+
+        verify(scoresMapper).create(entity);
+        assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getPlayer(), result.getPlayer());
+        assertEquals(entity.getScore(), result.getScore());
+        assertEquals(entity.getTime(), result.getTime());
+    }
+
+    @Test void findByPlayerSuccess() throws ParseException {
 
         doReturn(entity).when(scoresMapper).findById(any());
 
-        ScoreEntity result = oyoTestRepository.find(ID);
+        ScoreEntity result = oyoTestRepository.findById(ID);
 
-        assertEquals(result.getPlayer(),entity.getPlayer());
-        assertEquals(result.getScore(),entity.getScore());
-        assertEquals(result.getPublishedDate(),entity.getPublishedDate());
+        assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getPlayer(), result.getPlayer());
+        assertEquals(entity.getScore(), result.getScore());
+        assertEquals(entity.getTime(), result.getTime());
+    }
+
+    @Test
+    public void findByIdSuccess() throws ParseException {
+
+        doReturn(entity).when(scoresMapper).findById(any());
+
+        ScoreEntity result = oyoTestRepository.findById(ID);
+
+        assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getPlayer(), result.getPlayer());
+        assertEquals(entity.getScore(), result.getScore());
+        assertEquals(entity.getTime(), result.getTime());
     }
 
     @Test

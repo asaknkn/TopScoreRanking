@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class TestUtility {
     public static Date changeStrToDate(String inpDateStr) throws ParseException {
-        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         return sdformat.parse(inpDateStr);
     }
 }

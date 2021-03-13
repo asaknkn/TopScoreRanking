@@ -1,15 +1,12 @@
-package com.example.oyotest.entity;
+package com.example.oyotest.dto;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class ScoreEntity {
-    private Integer id;
+public class CreateScoreRequest {
     private String player;
     private Integer score;
     private Date time;
-
-    public ScoreEntity(){}
 }
