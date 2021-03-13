@@ -2,6 +2,7 @@ package com.example.oyotest.repository;
 
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.mapper.ScoresMapper;
+import com.example.oyotest.utility.TestUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,12 @@ class OyoTestRepositoryTest {
     @MockBean
     private ScoresMapper scoresMapper;
 
+    private static final Integer ID = 1;
+
     @Test
     public void findSuccess() throws ParseException {
-        Integer id = 1;
-
         String inpDateStr = "1984-11-01 00:00:00";
-        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date dateTime = sdformat.parse(inpDateStr);
+        Date dateTime = TestUtility.changeStrToDate(inpDateStr);
 
         ScoreEntity entity = new ScoreEntity();
         entity.setPlayer("Goku");
@@ -42,12 +42,21 @@ class OyoTestRepositoryTest {
         entity.setPublishedDate(dateTime);
 
         doReturn(entity).when(scoresMapper).findById(any());
-        ScoreEntity result = oyoTestRepository.find(id);
 
-        verify(scoresMapper).findById(id);
+        ScoreEntity result = oyoTestRepository.find(ID);
+
         assertEquals(result.getPlayer(),entity.getPlayer());
         assertEquals(result.getScore(),entity.getScore());
         assertEquals(result.getPublishedDate(),entity.getPublishedDate());
+    }
+
+    @Test
+    public void deleteSuccess() {
+        doNothing().when(scoresMapper).deleteById(any());
+
+        oyoTestRepository.delete(ID);
+
+        verify(scoresMapper).deleteById(ID);
     }
 
 
