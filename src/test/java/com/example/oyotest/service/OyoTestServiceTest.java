@@ -45,7 +45,7 @@ class OyoTestServiceTest {
         ScoreEntity entity = new ScoreEntity();
         entity.setId(ID);
 
-        doReturn(entity).when(oyoTestRepository).findByPlayer(any());
+        doReturn(entity).when(oyoTestRepository).findByPlayerScoreTime(any());
         CreateScoreResponse result = oyoTestService.createScore(param);
 
         assertEquals(entity.getId(), result.getId());
@@ -63,7 +63,7 @@ class OyoTestServiceTest {
         ScoreEntity entity = new ScoreEntity();
         entity.setId(ID);
 
-        doReturn(null).when(oyoTestRepository).findByPlayer(any());
+        doReturn(null).when(oyoTestRepository).findByPlayerScoreTime(any());
         doReturn(entity).when(oyoTestRepository).create(any());
         CreateScoreResponse result = oyoTestService.createScore(param);
 

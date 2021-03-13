@@ -17,8 +17,8 @@ public class OyoTestRepository {
          return entity;
     }
 
-    public ScoreEntity findByPlayer(String player) {
-        return scoresMapper.findByPlayer(player);
+    public ScoreEntity findByPlayerScoreTime(CreateScoreRequest param) {
+        return scoresMapper.findByPlayerScoreTime(param);
     }
 
     public ScoreEntity findById(Integer id ) {

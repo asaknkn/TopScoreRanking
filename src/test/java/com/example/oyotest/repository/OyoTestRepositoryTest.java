@@ -1,5 +1,6 @@
 package com.example.oyotest.repository;
 
+import com.example.oyotest.dto.CreateScoreRequest;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.mapper.ScoresMapper;
 import com.example.oyotest.utility.TestUtility;
@@ -30,6 +31,7 @@ class OyoTestRepositoryTest {
     private static final Integer ID = 1;
     private static final String INPUTDATESTR = "1984-11-01T00:00:00+09:00";
     static ScoreEntity entity;
+    static CreateScoreRequest param;
 
     @BeforeAll
     static void before() throws ParseException {
@@ -39,6 +41,11 @@ class OyoTestRepositoryTest {
         entity.setPlayer("Goku");
         entity.setScore(10);
         entity.setTime(dateTime);
+
+        param = new CreateScoreRequest();
+        param.setPlayer("Goku");
+        param.setScore(20);
+        param.setTime(dateTime);
     }
 
     @Test void createSuccess() throws ParseException {
@@ -54,11 +61,11 @@ class OyoTestRepositoryTest {
         assertEquals(entity.getTime(), result.getTime());
     }
 
-    @Test void findByPlayerSuccess() throws ParseException {
+    @Test void findByPlayerScoreTime() throws ParseException {
 
-        doReturn(entity).when(scoresMapper).findById(any());
+        doReturn(entity).when(scoresMapper).findByPlayerScoreTime(any());
 
-        ScoreEntity result = oyoTestRepository.findById(ID);
+        ScoreEntity result = oyoTestRepository.findByPlayerScoreTime(param);
 
         assertEquals(entity.getId(), result.getId());
         assertEquals(entity.getPlayer(), result.getPlayer());

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface ScoresMapper {
     void create(ScoreEntity entity);
-    ScoreEntity findByPlayer(String player);
+    ScoreEntity findByPlayerScoreTime(CreateScoreRequest param);
     ScoreEntity findById(Integer id);
     void deleteById(Integer id);
 }

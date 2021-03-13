@@ -20,20 +20,16 @@ public class OyoTestController {
 
     @PostMapping("")
     public CreateScoreResponse createScore(@RequestBody CreateScoreRequest params) {
-
-        return  oyoTestService.createScore(params);
+        return oyoTestService.createScore(params);
     }
 
     @GetMapping("/{id}")
     public GetScoreResponse getScore(@PathVariable("id") Integer id) {
-
-        GetScoreResponse res = oyoTestService.findScore(id);
-        return res;
+        return oyoTestService.findScore(id);
     }
 
     @DeleteMapping("/{id}")
     public DeleteScoreResponse deleteScore(@PathVariable("id") Integer id) {
-        DeleteScoreResponse res = oyoTestService.deleteScore(id);
-        return  res;
+        return oyoTestService.deleteScore(id);
     }
 }

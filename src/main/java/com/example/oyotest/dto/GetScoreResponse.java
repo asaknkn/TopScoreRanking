@@ -11,6 +11,7 @@ public class GetScoreResponse {
     private Integer score;
     private Date time;
 
+    public GetScoreResponse(){}
     public GetScoreResponse(Integer id, String player, Integer score, Date time) {
         this.id = id;
         this.player = player;

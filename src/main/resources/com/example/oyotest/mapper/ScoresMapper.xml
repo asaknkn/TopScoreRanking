@@ -6,7 +6,7 @@
     <insert id="create" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO score (player,score,time) values (#{player},#{score},#{time})
     </insert>
-    <select id="findByPlayer" resultType="com.example.oyotest.entity.ScoreEntity">
+    <select id="findByPlayerScoreTime" resultType="com.example.oyotest.entity.ScoreEntity">
         SELECT
           id,
           player,
@@ -15,7 +15,7 @@
         FROM
           score
         WHERE
-          player = #{player}
+          player = #{player} AND score = #{score} AND time = #{time}
     </select>
     <select id="findById" resultType="com.example.oyotest.entity.ScoreEntity">
         SELECT

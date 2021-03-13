@@ -7,6 +7,7 @@ import lombok.Data;
 public class CreateScoreResponse {
     private Integer id;
 
+    public CreateScoreResponse(){}
     public CreateScoreResponse(Integer id) {
         this.id = id;
     }

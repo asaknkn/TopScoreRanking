@@ -29,7 +29,7 @@ public class OyoTestService {
         entity.setScore(params.getScore());
         entity.setTime(params.getTime());
 
-        Optional<ScoreEntity> existedEntity = Optional.ofNullable(oyoTestRepository.findByPlayer(params.getPlayer()));
+        Optional<ScoreEntity> existedEntity = Optional.ofNullable(oyoTestRepository.findByPlayerScoreTime(params));
         if(existedEntity.isPresent()) {
             return new CreateScoreResponse(existedEntity.get().getId());
         }
