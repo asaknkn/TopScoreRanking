@@ -3,32 +3,48 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.oyotest.mapper.ScoresMapper">
+    <sql id="findByEntities">
+        <where>
+            <if test="players.size() > 0">
+                player in
+                <foreach item="item" collection="players" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="after != null">and time <![CDATA[ >= ]]> #{after} </if>
+            <if test="before != null">and #{before} <![CDATA[ >= ]]> time </if>
+        </where>
+    </sql>
+
     <insert id="create" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO score (player,score,time) values (#{player},#{score},#{time})
     </insert>
+
     <select id="findByPlayerScoreTime" resultType="com.example.oyotest.entity.ScoreEntity">
-        SELECT
-          id,
-          player,
-          score,
-          time
-        FROM
-          score
-        WHERE
-          player = #{player} AND score = #{score} AND time = #{time}
+        SELECT id, player, score, time
+        FROM score
+        WHERE player = #{player} AND score = #{score} AND time = #{time}
     </select>
+
     <select id="findById" resultType="com.example.oyotest.entity.ScoreEntity">
-        SELECT
-          id,
-          player,
-          score,
-          time
-        FROM
-          score
-        WHERE
-          id = #{id}
+        SELECT id, player, score, time
+        FROM score
+        WHERE id = #{id}
     </select>
+
     <delete id="deleteById">
         DELETE FROM score WHERE id = #{id}
     </delete>
+
+    <select id="cntByEntities" resultType="Integer">
+        SELECT count(*)
+        FROM score
+        <include refid="findByEntities"/>
+    </select>
+
+    <select id="findList" resultType="com.example.oyotest.entity.ScoreEntity">
+        SELECT id, player, score, time
+        FROM score
+        <include refid="findByEntities"/>
+    </select>
 </mapper>

@@ -1,9 +1,11 @@
 package com.example.oyotest.repository;
 
 import com.example.oyotest.dto.CreateScoreRequest;
+import com.example.oyotest.dto.ListScoreRequest;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.mapper.ScoresMapper;
 import com.example.oyotest.utility.TestUtility;
+import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,6 +99,41 @@ class OyoTestRepositoryTest {
         verify(scoresMapper).deleteById(ID);
     }
 
+    @Test
+    public void cntByEntitiesSuccess() throws ParseException {
+        doReturn(1).when(scoresMapper).cntByEntities(any());
 
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+        ListScoreRequest listScoreRequest = new ListScoreRequest();
+        listScoreRequest.addList("Goku");
+        listScoreRequest.setBefore(dateTime);
+        listScoreRequest.setAfter(dateTime);
 
+        Integer result = oyoTestRepository.cntByEntities(listScoreRequest);
+
+        assertEquals(1,result);
+    }
+
+    @Test
+    public void findListSuccess() throws ParseException {
+        ArrayList<ScoreEntity> scoreEntities = new ArrayList<ScoreEntity>();
+        scoreEntities.add(entity);
+
+        doReturn(scoreEntities).when(scoresMapper).findList(any(),any());
+
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+        ListScoreRequest listScoreRequest = new ListScoreRequest();
+        listScoreRequest.addList("Goku");
+        listScoreRequest.setBefore(dateTime);
+        listScoreRequest.setAfter(dateTime);
+
+        RowBounds rowBounds = new RowBounds();
+
+        ArrayList<ScoreEntity> result = oyoTestRepository.findList(listScoreRequest, rowBounds);
+
+        assertEquals(entity.getId(), result.get(0).getId());
+        assertEquals(entity.getPlayer(), result.get(0).getPlayer());
+        assertEquals(entity.getScore(), result.get(0).getScore());
+        assertEquals(entity.getTime(), result.get(0).getTime());
+    }
 }

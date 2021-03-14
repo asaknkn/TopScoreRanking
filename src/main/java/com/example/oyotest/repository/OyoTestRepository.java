@@ -1,10 +1,14 @@
 package com.example.oyotest.repository;
 
 import com.example.oyotest.dto.CreateScoreRequest;
+import com.example.oyotest.dto.ListScoreRequest;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.mapper.ScoresMapper;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
 
 @Repository
 public class OyoTestRepository {
@@ -27,5 +31,13 @@ public class OyoTestRepository {
 
     public void delete(Integer id) {
         scoresMapper.deleteById(id);
+    }
+
+    public Integer cntByEntities(ListScoreRequest param) {
+        return scoresMapper.cntByEntities(param);
+    }
+
+    public ArrayList<ScoreEntity> findList(ListScoreRequest param, RowBounds rowBounds) {
+        return scoresMapper.findList(param, rowBounds);
     }
 }
