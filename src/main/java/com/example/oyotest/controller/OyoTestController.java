@@ -3,21 +3,14 @@ package com.example.oyotest.controller;
 import com.example.oyotest.dto.*;
 import com.example.oyotest.service.OyoTestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +22,9 @@ public class OyoTestController {
     private static final Integer PAGESIZE = 5;
 
     @Autowired
-    public  OyoTestController(OyoTestService oyoTestService) {this.oyoTestService = oyoTestService;}
+    public  OyoTestController(OyoTestService oyoTestService) {
+        this.oyoTestService = oyoTestService;
+    }
 
 
     @PostMapping("")
@@ -79,8 +74,12 @@ public class OyoTestController {
             }
         });
 
-        //System.out.println(param);
         return oyoTestService.listScore(param, pageable).getContent();
+    }
+
+    @GetMapping("/history")
+    public GetPlayerHistoryResponse getPlayerHistory(@RequestParam String player){
+        return oyoTestService.findPlayerHistory(player);
     }
 
 }

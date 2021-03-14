@@ -3,6 +3,7 @@ package com.example.oyotest.service;
 import com.example.oyotest.dto.*;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.repository.OyoTestRepository;
+import com.example.oyotest.utility.CalculatePlayerScore;
 import com.example.oyotest.utility.TestUtility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.MockedStatic;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -175,18 +177,17 @@ class OyoTestServiceTest {
 
     @Test
     public void listScoreSuccessTotalZero() throws ParseException {
-        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+        doReturn(0).when(oyoTestRepository).cntByEntities(any());
 
         ScoreEntity entity = new ScoreEntity();
         entity.setId(ID);
         entity.setPlayer("Goku");
         entity.setScore(10);
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
         entity.setTime(dateTime);
 
         ArrayList<ScoreEntity> scoreEntities = new ArrayList<ScoreEntity>();
         scoreEntities.add(entity);
-
-        doReturn(0).when(oyoTestRepository).cntByEntities(any());
 
         ListScoreRequest listScoreRequest = new ListScoreRequest();
         listScoreRequest.addList("Goku");
@@ -198,6 +199,46 @@ class OyoTestServiceTest {
 
         List<GetScoreResponse> expectedRes = new ArrayList<GetScoreResponse>();
         assertEquals(expectedRes, result.getContent());
+    }
+
+    @Test
+    public void findPlayerHistorySuccess() throws ParseException {
+        ScoreEntity entity = new ScoreEntity();
+        entity.setPlayer("Goku");
+        entity.setScore(10);
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+        entity.setTime(dateTime);
+
+        ArrayList<ScoreEntity> entities = new ArrayList<ScoreEntity>();
+        entities.add(entity);
+
+        doReturn(entities).when(oyoTestRepository).findByPlayer(any());
+
+        MockedStatic mocked = mockStatic(CalculatePlayerScore.class);
+        mocked.when(() -> CalculatePlayerScore.getTopScore(any())).thenReturn(20);
+        mocked.when(() -> CalculatePlayerScore.getLowScore(any())).thenReturn(20);
+        mocked.when(() -> CalculatePlayerScore.getAverageScore(any())).thenReturn((float) 20);
+
+        GetPlayerHistoryResponse expected = new GetPlayerHistoryResponse();
+        ArrayList<PlayerScore> playerScores = new ArrayList<PlayerScore>();
+        PlayerScore playerScore = new PlayerScore(10, dateTime);
+
+        expected.setName("Goku");
+        playerScores.add(playerScore);
+        expected.setScores(playerScores);
+        expected.setTop_score(20);
+        expected.setLow_score(20);
+        expected.setAverage_score((float) 20);
+
+        GetPlayerHistoryResponse result = oyoTestService.findPlayerHistory("Goku");
+        assertEquals(expected.getName(), result.getName());
+        assertEquals(expected.getScores().get(0).getScore(), result.getScores().get(0).getScore());
+        assertEquals(expected.getScores().get(0).getTime(), result.getScores().get(0).getTime());
+        assertEquals(expected.getLow_score(), result.getLow_score());
+        assertEquals(expected.getTop_score(), result.getTop_score());
+        assertEquals(expected.getAverage_score(), result.getAverage_score());
+
+        mocked.close();
     }
 
 }

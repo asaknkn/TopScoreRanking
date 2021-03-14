@@ -27,6 +27,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '2.7.21'
 }
 
 test {

@@ -40,4 +40,8 @@ public class OyoTestRepository {
     public ArrayList<ScoreEntity> findList(ListScoreRequest param, RowBounds rowBounds) {
         return scoresMapper.findList(param, rowBounds);
     }
+
+    public ArrayList<ScoreEntity> findByPlayer(String player) {
+        return scoresMapper.findByPlayer(player);
+    }
 }

@@ -1,9 +1,6 @@
 package com.example.oyotest.integration;
 
-import com.example.oyotest.dto.CreateScoreRequest;
-import com.example.oyotest.dto.CreateScoreResponse;
-import com.example.oyotest.dto.DeleteScoreResponse;
-import com.example.oyotest.dto.GetScoreResponse;
+import com.example.oyotest.dto.*;
 import com.example.oyotest.utility.TestUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -370,4 +367,40 @@ public class IntegrationTests {
         assertEquals(getScoreResponses, result);
     }
 
+    @Sql({ "classpath:schema.sql", "classpath:data.sql" })
+    @Test
+    public void getPlayerHistoryIntegration() throws ParseException {
+        String player = "Goku";
+        String URL = "http://localhost:" + port + "/v1/scores";
+        GetPlayerHistoryResponse result = this.restTemplate
+                .getForObject(URL+"/history?player={player}",
+                        GetPlayerHistoryResponse.class, player);
+
+        GetPlayerHistoryResponse getPlayerHistoryResponse = new GetPlayerHistoryResponse();
+        getPlayerHistoryResponse.setName("Goku");
+        getPlayerHistoryResponse.setTop_score(50);
+        getPlayerHistoryResponse.setLow_score(20);
+        getPlayerHistoryResponse.setAverage_score((float) 35.0);
+
+        ArrayList<PlayerScore> playerScores = new ArrayList<PlayerScore>();
+        String strDate = "1984-11-01T00:00:00+09:00";
+        Date date = TestUtility.changeStrToDate(strDate);
+        playerScores.add(new PlayerScore(20, date));
+
+        strDate = "2020-10-01T00:00:00+09:00";
+        date = TestUtility.changeStrToDate(strDate);
+        playerScores.add(new PlayerScore(30, date));
+
+        strDate = "2020-01-01T00:00:00+09:00";
+        date = TestUtility.changeStrToDate(strDate);
+        playerScores.add(new PlayerScore(40, date));
+
+        strDate = "2021-01-01T00:00:00+09:00";
+        date = TestUtility.changeStrToDate(strDate);
+        playerScores.add(new PlayerScore(50, date));
+
+        getPlayerHistoryResponse.setScores(playerScores);
+
+        assertEquals(getPlayerHistoryResponse, result);
+    }
 }

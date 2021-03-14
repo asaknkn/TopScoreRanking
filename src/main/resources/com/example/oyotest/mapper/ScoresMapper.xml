@@ -47,4 +47,10 @@
         FROM score
         <include refid="findByEntities"/>
     </select>
+
+    <select id="findByPlayer" resultType="com.example.oyotest.entity.ScoreEntity">
+        SELECT id, player, score, time
+        FROM score
+        WHERE player = #{player}
+    </select>
 </mapper>

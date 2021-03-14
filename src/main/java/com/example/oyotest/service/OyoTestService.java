@@ -1,6 +1,7 @@
 package com.example.oyotest.service;
 
 import com.example.oyotest.dto.*;
+import com.example.oyotest.utility.CalculatePlayerScore;
 import com.example.oyotest.entity.ScoreEntity;
 import com.example.oyotest.repository.OyoTestRepository;
 import org.apache.ibatis.session.RowBounds;
@@ -72,5 +73,23 @@ public class OyoTestService {
         }
 
         return new PageImpl<>(getScoreResponses, pageable, total);
+    }
+
+    public GetPlayerHistoryResponse findPlayerHistory(String playerName) {
+        ArrayList<ScoreEntity> entities = oyoTestRepository.findByPlayer(playerName);
+
+        GetPlayerHistoryResponse getPlayerHistoryResponse = new GetPlayerHistoryResponse();
+        getPlayerHistoryResponse.setName(playerName);
+        getPlayerHistoryResponse.setTop_score(CalculatePlayerScore.getTopScore(entities));
+        getPlayerHistoryResponse.setLow_score(CalculatePlayerScore.getLowScore(entities));
+        getPlayerHistoryResponse.setAverage_score(CalculatePlayerScore.getAverageScore(entities));
+
+        ArrayList<PlayerScore> playerScores = new ArrayList<PlayerScore>();
+        entities.forEach(entity -> {
+            playerScores.add(new PlayerScore(entity.getScore(), entity.getTime()));
+        });
+        getPlayerHistoryResponse.setScores(playerScores);
+
+        return getPlayerHistoryResponse;
     }
 }

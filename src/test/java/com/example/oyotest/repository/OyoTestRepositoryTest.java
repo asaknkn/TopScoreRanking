@@ -136,4 +136,18 @@ class OyoTestRepositoryTest {
         assertEquals(entity.getScore(), result.get(0).getScore());
         assertEquals(entity.getTime(), result.get(0).getTime());
     }
+
+    @Test void findByPlayerSuccess() {
+        ArrayList<ScoreEntity> scoreEntities = new ArrayList<ScoreEntity>();
+        scoreEntities.add(entity);
+
+        doReturn(scoreEntities).when(scoresMapper).findByPlayer(any());
+
+        ArrayList<ScoreEntity> result = oyoTestRepository.findByPlayer("Goku");
+
+        assertEquals(entity.getId(), result.get(0).getId());
+        assertEquals(entity.getPlayer(), result.get(0).getPlayer());
+        assertEquals(entity.getScore(), result.get(0).getScore());
+        assertEquals(entity.getTime(), result.get(0).getTime());
+    }
 }

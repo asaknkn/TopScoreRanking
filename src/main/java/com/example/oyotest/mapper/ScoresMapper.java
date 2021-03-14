@@ -18,4 +18,5 @@ public interface ScoresMapper {
     void deleteById(Integer id);
     Integer cntByEntities(ListScoreRequest param);
     ArrayList<ScoreEntity> findList(ListScoreRequest param, RowBounds rowBounds);
+    ArrayList<ScoreEntity> findByPlayer (String player);
 }

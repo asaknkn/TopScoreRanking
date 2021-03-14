@@ -1,9 +1,6 @@
 package com.example.oyotest.controller;
 
-import com.example.oyotest.dto.CreateScoreRequest;
-import com.example.oyotest.dto.CreateScoreResponse;
-import com.example.oyotest.dto.DeleteScoreResponse;
-import com.example.oyotest.dto.GetScoreResponse;
+import com.example.oyotest.dto.*;
 import com.example.oyotest.service.OyoTestService;
 import com.example.oyotest.utility.TestUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -184,20 +181,8 @@ class OyoTestControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-
         String response = result.getResponse().getContentAsString();
-
-        for (int i = 0; i < getScoreResponses.size(); ++i){
-            Integer id = JsonPath.parse(response).read("$["+i+"].id");
-            String playerName = JsonPath.parse(response).read("$["+i+"].player");
-            Integer score = JsonPath.parse(response).read("$["+i+"].score");
-            String time = JsonPath.parse(response).read("$["+i+"].time");
-
-            assertEquals(getScoreResponses.get(i).getId(), id);
-            assertEquals(getScoreResponses.get(i).getPlayer(), playerName);
-            assertEquals(getScoreResponses.get(i).getScore(), score);
-            assertEquals(inputStr, time);
-        }
+        arrayAssert(getScoreResponses, response, inputStr);
     }
 
     @Test
@@ -225,18 +210,35 @@ class OyoTestControllerTest {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
+        arrayAssert(getScoreResponses, response, inputStr);
+    }
 
-        for (int i = 0; i < getScoreResponses.size(); ++i){
-            Integer id = JsonPath.parse(response).read("$["+i+"].id");
-            String playerName = JsonPath.parse(response).read("$["+i+"].player");
-            Integer score = JsonPath.parse(response).read("$["+i+"].score");
-            String time = JsonPath.parse(response).read("$["+i+"].time");
+    @Test
+    public void listScoreSuccessOnlyTime() throws Exception {
+        String inputStr = "2020-10-01T00:00:00+09:00";
+        Date dateTime = TestUtility.changeStrToDate(inputStr);
 
-            assertEquals(getScoreResponses.get(i).getId(), id);
-            assertEquals(getScoreResponses.get(i).getPlayer(), playerName);
-            assertEquals(getScoreResponses.get(i).getScore(), score);
-            assertEquals(inputStr, time);
-        }
+        String before = "2021-01-01 23:59:59";
+        String after = "2021-01-01 23:59:59";
+
+        List<GetScoreResponse> getScoreResponses = new ArrayList<GetScoreResponse>();
+        getScoreResponses.add(new GetScoreResponse(ID,"Goku",20,dateTime));
+        getScoreResponses.add(new GetScoreResponse(ID,"Gohan",20,dateTime));
+
+        Integer total = 1;
+
+        Page<GetScoreResponse> getScoreResponsePage = new PageImpl<>(getScoreResponses, pageable, total);
+        doReturn(getScoreResponsePage).when(oyoTestService).listScore(any(),any());
+
+        MvcResult result = mockMvc.perform(
+                get("/v1/scores/list")
+                        .param("before", before)
+                        .param("after", after))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        arrayAssert(getScoreResponses, response, inputStr);
     }
 
     @Test
@@ -261,19 +263,110 @@ class OyoTestControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
+        String response = result.getResponse().getContentAsString();
+        arrayAssert(getScoreResponses, response, inputStr);
+    }
+
+    @Test
+    public void listScoreSuccessOnlyAfter() throws Exception {
+        String inputStr = "2020-10-01T00:00:00+09:00";
+        Date dateTime = TestUtility.changeStrToDate(inputStr);
+
+        String after = "2021-01-01 23:59:59";
+
+        List<GetScoreResponse> getScoreResponses = new ArrayList<GetScoreResponse>();
+        getScoreResponses.add(new GetScoreResponse(ID,"Goku",20,dateTime));
+        getScoreResponses.add(new GetScoreResponse(ID,"Gohan",20,dateTime));
+
+        Integer total = 1;
+
+        Page<GetScoreResponse> getScoreResponsePage = new PageImpl<>(getScoreResponses, pageable, total);
+        doReturn(getScoreResponsePage).when(oyoTestService).listScore(any(),any());
+
+        MvcResult result = mockMvc.perform(
+                get("/v1/scores/list")
+                        .param("after", after))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
         String response = result.getResponse().getContentAsString();
+        arrayAssert(getScoreResponses, response, inputStr);
+    }
 
-        for (int i = 0; i < getScoreResponses.size(); ++i){
+    @Test
+    public void listScoreSuccessNoQuery() throws Exception {
+        String inputStr = "2020-10-01T00:00:00+09:00";
+        Date dateTime = TestUtility.changeStrToDate(inputStr);
+
+        List<GetScoreResponse> getScoreResponses = new ArrayList<GetScoreResponse>();
+        getScoreResponses.add(new GetScoreResponse(ID,"Goku",20,dateTime));
+        getScoreResponses.add(new GetScoreResponse(ID,"Gohan",20,dateTime));
+
+        Integer total = 1;
+
+        Page<GetScoreResponse> getScoreResponsePage = new PageImpl<>(getScoreResponses, pageable, total);
+        doReturn(getScoreResponsePage).when(oyoTestService).listScore(any(),any());
+
+        MvcResult result = mockMvc.perform(
+                get("/v1/scores/list"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        arrayAssert(getScoreResponses, response, inputStr);
+    }
+
+    @Test
+    public void getPlayerHistorySuccess() throws Exception {
+        Date dateTime = TestUtility.changeStrToDate(INPUTDATESTR);
+
+        GetPlayerHistoryResponse getPlayerHistoryResponse = new GetPlayerHistoryResponse();
+        getPlayerHistoryResponse.setName("Goku");
+        getPlayerHistoryResponse.setTop_score(20);
+        getPlayerHistoryResponse.setLow_score(20);
+        getPlayerHistoryResponse.setAverage_score(20.0f);
+
+        ArrayList<PlayerScore> playerScores = new ArrayList<PlayerScore>();
+        PlayerScore playerScore = new PlayerScore(20, dateTime);
+        playerScores.add(playerScore);
+        getPlayerHistoryResponse.setScores(playerScores);
+
+        doReturn(getPlayerHistoryResponse).when(oyoTestService).findPlayerHistory(any());
+
+        MvcResult result = mockMvc.perform(
+                get("/v1/scores/history")
+                        .param("player", "Goku"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String playerName = JsonPath.parse(response).read("$.name");
+        Integer score = JsonPath.parse(response).read("$.scores[0].score");
+        String time = JsonPath.parse(response).read("$.scores[0].time");
+        Integer topScore = JsonPath.parse(response).read("$.top_score");
+        Integer lowScore = JsonPath.parse(response).read("$.low_score");
+        Double averageIntScore = JsonPath.parse(response).read("$.average_score");
+        Float averageScore = Float.valueOf(String.valueOf(averageIntScore));
+
+        assertEquals(getPlayerHistoryResponse.getName(), playerName);
+        assertEquals(getPlayerHistoryResponse.getScores().get(0).getScore(), score);
+        assertEquals(INPUTDATESTR, time);
+        assertEquals(getPlayerHistoryResponse.getTop_score(), topScore);
+        assertEquals(getPlayerHistoryResponse.getLow_score(), lowScore);
+        assertEquals(getPlayerHistoryResponse.getAverage_score(), averageScore);
+    }
+
+    private void arrayAssert(List<GetScoreResponse> expected, String response, String inputTime) {
+        for (int i = 0; i < expected.size(); ++i){
             Integer id = JsonPath.parse(response).read("$["+i+"].id");
             String playerName = JsonPath.parse(response).read("$["+i+"].player");
             Integer score = JsonPath.parse(response).read("$["+i+"].score");
             String time = JsonPath.parse(response).read("$["+i+"].time");
 
-            assertEquals(getScoreResponses.get(i).getId(), id);
-            assertEquals(getScoreResponses.get(i).getPlayer(), playerName);
-            assertEquals(getScoreResponses.get(i).getScore(), score);
-            assertEquals(inputStr, time);
+            assertEquals(expected.get(i).getId(), id);
+            assertEquals(expected.get(i).getPlayer(), playerName);
+            assertEquals(expected.get(i).getScore(), score);
+            assertEquals(inputTime, time);
         }
     }
 }
