@@ -43,6 +43,7 @@ Test files of unit and integration test are in test directory.
   - score: integer
   - time: string(ISO 8601)
 - Responses
+  - Content type: application/json
   - id: string
 
 ```
@@ -68,6 +69,7 @@ Responses
 - Requests
   - id(required): string
 - Responses
+  - Content type: application/json
   - id: string
   - player: string
   - score: integer
@@ -92,6 +94,7 @@ Responses
 - Requests
   - id(required): string
 - Responses
+  - Content type: application/json
   - id: string
   - deleted_date: string(ISO 8601)
 
@@ -117,6 +120,7 @@ Responses
     - support pagination
     - page size is 5
 - Responses(Array of Object)
+  - Content type: application/json
   - id: string
   - player: string
   - score: integer
@@ -166,6 +170,7 @@ Responses
 - Requests
   - player(required): string
 - Responses
+  - Content type: application/json
   - name: string
   - scores: Array of Object
     - score: integer
