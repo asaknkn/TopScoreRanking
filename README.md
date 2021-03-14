@@ -39,9 +39,9 @@ Test files of unit and integration test are in test directory.
 - Path: /v1/scores
 - Method: POST
 - Requests
-  - player: string
-  - score: integer
-  - time: string(ISO 8601)
+  - player(required): string
+  - score(required): integer
+  - time(required): string(ISO 8601)
 - Responses
   - Content type: application/json
   - id: string
@@ -51,9 +51,9 @@ http://localhost:8080/v1/scores/
 
 Requests
 {
-    "player(required)": "Gohan",
-    "score(required)": 53335,
-    "time(required)": "1989-04-01T01:00:00+09:00"
+    "player": "Gohan",
+    "score": 53335,
+    "time": "1989-04-01T01:00:00+09:00"
 }
 
 Responses
